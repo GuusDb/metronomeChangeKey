@@ -61,6 +61,26 @@ class Metronome extends Component {
     }
   };
 
+  handleMeasureChange = (event) => {
+    const measureChange = event.target.value;
+
+    if (this.state.isPlaying) {
+      // stop old timer and start a new one
+      clearInterval(this.timer);
+      this.timer = setInterval(this.playClick, (60 / this.state.bpm) * 1000);
+
+      // set the new bpm
+      // and reset the beat counter
+      this.setState({
+        count: 0,
+        measureChange,
+      });
+    } else {
+      // otherwise, just update the bpm
+      this.setState({ measureChange });
+    }
+  };
+
   playClick = () => {
     const { count, beatsPerMeasure, measure, measureChange } = this.state;
 
@@ -70,6 +90,9 @@ class Metronome extends Component {
       if (measure % measureChange === 0) {
         this.state.note = notes[Math.floor(Math.random() * notes.length)];
       }
+      this.setState((state) => ({
+        measure: (state.measure + 1) % state.measureChange,
+      }));
     } else {
       this.click1.play();
     }
@@ -117,6 +140,16 @@ class Metronome extends Component {
             value={bpm}
             onChange={this.handleInputChange}
           />
+          <label for='tentacles'>Measures per key change</label>
+          <input
+            type='number'
+            id='measure'
+            name='measure'
+            min='1'
+            max='20'
+            defaultValue={this.state.measureChange}
+            onChange={this.handleMeasureChange}
+          ></input>
         </div>
         <button onClick={this.startStop}>{isPlaying ? 'Stop' : 'Start'}</button>
       </div>
