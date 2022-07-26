@@ -88,7 +88,9 @@ class Metronome extends Component {
     if (count % beatsPerMeasure === 0) {
       this.click2.play();
       if (measure % measureChange === 0) {
-        this.state.note = notes[Math.floor(Math.random() * notes.length)];
+        this.setState((state) => ({
+          note: notes[Math.floor(Math.random() * notes.length)],
+        }));
       }
       this.setState((state) => ({
         measure: (state.measure + 1) % state.measureChange,
