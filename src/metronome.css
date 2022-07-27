@@ -19,4 +19,12 @@
     color: #fff;
     font-size: 18px;
   }
+
+  .btnSubmit{
+    margin-top: 8px;
+  }
+
+  label{
+    margin-right: 4px;
+  }
   

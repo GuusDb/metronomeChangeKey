@@ -81,6 +81,27 @@ class Metronome extends Component {
     }
   };
 
+  handleSignatureChange = (event) => {
+    const beatsPerMeasure = event.target.value;
+    console.log(beatsPerMeasure);
+
+    if (this.state.isPlaying) {
+      // stop old timer and start a new one
+      clearInterval(this.timer);
+      this.timer = setInterval(this.playClick, (60 / this.state.bpm) * 1000);
+
+      // set the new bpm
+      // and reset the beat counter
+      this.setState({
+        count: 0,
+        beatsPerMeasure,
+      });
+    } else {
+      // otherwise, just update the bpm
+      this.setState({ beatsPerMeasure });
+    }
+  };
+
   playClick = () => {
     const { count, beatsPerMeasure, measure, measureChange } = this.state;
 
@@ -88,7 +109,9 @@ class Metronome extends Component {
     if (count % beatsPerMeasure === 0) {
       this.click2.play();
       if (measure % measureChange === 0) {
-        this.state.note = notes[Math.floor(Math.random() * notes.length)];
+        this.setState((state) => ({
+          note: notes[Math.floor(Math.random() * notes.length)],
+        }));
       }
       this.setState((state) => ({
         measure: (state.measure + 1) % state.measureChange,
@@ -140,7 +163,7 @@ class Metronome extends Component {
             value={bpm}
             onChange={this.handleInputChange}
           />
-          <label for='tentacles'>Measures per key change</label>
+          <label>Measures per key change</label>
           <input
             type='number'
             id='measure'
@@ -150,8 +173,21 @@ class Metronome extends Component {
             defaultValue={this.state.measureChange}
             onChange={this.handleMeasureChange}
           ></input>
+          <label>choose time signature:</label>
+          <select
+            name='signature'
+            id='signature'
+            onChange={this.handleSignatureChange}
+          >
+            <option value={4}>4/4</option>
+            <option value={2}>2/4</option>
+            <option value={3}>3/4</option>
+            <option value={5}>5/4</option>
+          </select>
         </div>
-        <button onClick={this.startStop}>{isPlaying ? 'Stop' : 'Start'}</button>
+        <button className='btnSubmit' onClick={this.startStop}>
+          {isPlaying ? 'Stop' : 'Start'}
+        </button>
       </div>
     );
   }
